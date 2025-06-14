@@ -1,0 +1,419 @@
+!DOCTYPE html>
+html lang="id">
+head>
+meta charset="UTF-8" />
+meta name="viewport" content="width=device-width, initial-scale=1" />
+title>RDW Admin - Kelola Katalog Produk & Statistik/title>
+style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #121212;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background: linear-gradient(135deg, #4b0082 0%, #00bfa5 100%);
+    padding: 16px 24px;
+    color: white;
+    font-weight: 900;
+    font-size: 28px;
+    user-select: none;
+  }
+  main {
+    flex: 1;
+    max-width: 900px;
+    margin: 24px auto;
+    padding: 0 16px 48px 16px;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 32px;
+    background: linear-gradient(135deg, #e040fb, #00bfa5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+  }
+  .stat-box {
+    background: rgba(0, 191, 165, 0.1);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    font-size: 1.4rem;
+    text-align: center;
+    color: #00bfa5;
+    font-weight: 700;
+  }
+  form {
+    background: rgba(255 255 255 / 0.08);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+  label {
+    display: block;
+    margin-top: 16px;
+    font-weight: 600;
+    color: #b0bec5;
+  }
+  input[type="text"],
+  textarea {
+    width: 100%;
+    padding: 10px 14px;
+    margin-top: 8px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    background: #262626;
+    color: white;
+  }
+  textarea {
+    min-height: 100px;
+  }
+  input[type="file"] {
+    margin-top: 12px;
+    color: #b0bec5;
+  }
+  button {
+    margin-top: 24px;
+    background: linear-gradient(135deg, #00bfa5, #e040fb);
+    border: none;
+    padding: 14px 32px;
+    border-radius: 14px;
+    color: #121212;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+  }
+  button:hover,
+  button:focus {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px #00bfa5;
+    outline: none;
+  }
+  .products-list {
+    margin-top: 40px;
+  }
+  .product-item {
+    background: rgba(255 255 255 / 0.06);
+    margin-bottom: 16px;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .product-thumb {
+    width: 120px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #262626;
+  }
+  .product-info {
+    flex: 1;
+    color: #b0bec5;
+  }
+  .product-info h3 {
+    margin: 0 0 8px 0;
+    color: #00bfa5;
+    font-weight: 700;
+  }
+  .product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .btn-edit,
+  .btn-delete {
+    background: transparent;
+    border: 2px solid #00bfa5;
+    color: #00bfa5;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .btn-edit:hover,
+  .btn-edit:focus {
+    background-color: #00bfa5;
+    color: #121212;
+    outline: none;
+  }
+  .btn-delete:hover,
+  .btn-delete:focus {
+    background-color: #e040fb;
+    color: #121212;
+    outline: none;
+    border-color: #e040fb;
+  }
+  @media (max-width: 640px) {
+    .product-item {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .product-thumb {
+      width: 100%;
+      height: auto;
+    }
+    .product-actions {
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+  }
+/style>
+/head>
+body>
+header>RDW Admin Panel/header>
+main>
+  h1>Kelola Produk & Statistik Kunjungan/h1>
+
+  div class="stat-box" id="visits-count" aria-live="polite" aria-atomic="true">
+    Menghitung pengunjung...
+  /div>
+
+  form id="product-form" aria-label="Form produk">
+    input type="hidden" id="product-id" value="" />
+    label for="product-name">Nama Produk/label>
+    input type="text" id="product-name" name="product-name" required autocomplete="off" />
+
+    label for="product-description">Deskripsi Produk/label>
+    textarea id="product-description" name="product-description" required>/textarea>
+
+    label for="product-alt">Alt Text Gambar (untuk aksesibilitas)/label>
+    input type="text" id="product-alt" name="product-alt" required autocomplete="off" />
+
+    label for="product-image">Upload Gambar Produk (JPEG/PNG, max 2MB)/label>
+    input type="file" id="product-image" name="product-image" accept="image/jpeg, image/png" />
+
+    button type="submit" id="submit-btn">Tambah Produk/button>
+  /form>
+
+  section class="products-list" id="products-list" aria-live="polite" aria-atomic="true" aria-label="Daftar produk yang sudah ada">
+    !-- Daftar produk akan muncul di sini -->
+  /section>
+/main>
+
+script>
+  const apiBase = 'http://localhost:3000/api';
+  const visitsCount = document.getElementById('visits-count');
+
+  const form = document.getElementById('product-form');
+  const inputId = document.getElementById('product-id');
+  const inputName = document.getElementById('product-name');
+  const inputDescription = document.getElementById('product-description');
+  const inputAlt = document.getElementById('product-alt');
+  const inputImage = document.getElementById('product-image');
+  const submitBtn = document.getElementById('submit-btn');
+  const productsList = document.getElementById('products-list');
+
+  let currentEditingId = null;
+  let currentImageBase64 = '';
+
+  // Fetch visitor stats and display
+  async function loadStats() {
+    try {
+      const resp = await fetch(`${apiBase}/stats`);
+      const data = await resp.json();
+      visitsCount.textContent = `Jumlah Pengunjung Website Saat Ini: ${data.visits.toLocaleString('id-ID')}`;
+    } catch (e) {
+      visitsCount.textContent = 'Gagal memuat statistik pengunjung.';
+    }
+  }
+
+  // Fetch products list
+  async function loadProducts() {
+    try {
+      const resp = await fetch(`${apiBase}/products`);
+      const products = await resp.json();
+      renderProductsList(products);
+    } catch (e) {
+      productsList.innerHTML = 'p style="color:#ff5252;">Gagal memuat data produk./p>';
+    }
+  }
+
+  // Render products list in admin panel
+  function renderProductsList(products) {
+    if(products.length === 0) {
+      productsList.innerHTML = 'p>Tidak ada produk yang terdaftar./p>';
+      return;
+    }
+    productsList.innerHTML = '';
+    products.forEach(product => {
+      const item = document.createElement('article');
+      item.className = 'product-item';
+      item.innerHTML = `
+        img src="${product.image}" alt="${product.alt}" class="product-thumb" />
+        div class="product-info">
+          h3>${escapeHTML(product.name)}/h3>
+          p>${escapeHTML(product.description.split('\\n')[0])}/p>
+        /div>
+        div class="product-actions">
+          button class="btn-edit" aria-label="Edit ${escapeHTML(product.name)}" data-id="${product.id}">Edit/button>
+          button class="btn-delete" aria-label="Hapus ${escapeHTML(product.name)}" data-id="${product.id}">Hapus/button>
+        /div>
+      `;
+      productsList.appendChild(item);
+    });
+
+    // Add event listeners to edit and delete buttons
+    document.querySelectorAll('.btn-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        editProduct(id);
+      });
+    });
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        if(confirm('Yakin ingin menghapus produk ini?')) deleteProduct(id);
+      });
+    });
+  }
+
+  // Escape HTML to prevent injection
+  function escapeHTML(text) {
+    return text.replace(/[&>"']/g, function(m) {
+      return {'&':'&amp;', '':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[m];
+    });
+  }
+
+  // Edit product - load data into form
+  async function editProduct(id) {
+    try {
+      const resp = await fetch(`${apiBase}/products`);
+      const products = await resp.json();
+      const product = products.find(p => p.id == id);
+      if(!product) return alert('Produk tidak ditemukan');
+      currentEditingId = id;
+      inputId.value = id;
+      inputName.value = product.name;
+      inputDescription.value = product.description;
+      inputAlt.value = product.alt;
+      currentImageBase64 = product.image;
+      inputImage.value = '';
+      submitBtn.textContent = 'Simpan Perubahan';
+    } catch(e) {
+      alert('Gagal memuat data produk.');
+    }
+  }
+
+  // Delete product request
+  async function deleteProduct(id) {
+    try {
+      const resp = await fetch(`${apiBase}/products/${id}`, { method: 'DELETE' });
+      if (resp.ok){
+        alert('Produk berhasil dihapus.');
+        loadProducts();
+        resetForm();
+      } else {
+        alert('Gagal menghapus produk.');
+      }
+    } catch(e) {
+      alert('Terjadi kesalahan jaringan.');
+    }
+  }
+
+  // Convert image file to base64 string
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Reset form to blank and state
+  function resetForm() {
+    currentEditingId = null;
+    inputId.value = '';
+    inputName.value = '';
+    inputDescription.value = '';
+    inputAlt.value = '';
+    inputImage.value = '';
+    currentImageBase64 = '';
+    submitBtn.textContent = 'Tambah Produk';
+  }
+
+  // Handle form submit: create or update product
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = currentEditingId ? 'Menyimpan...' : 'Menambah...';
+
+    try {
+      let imageData = currentImageBase64;
+
+      // If new image file selected, convert to base64
+      if(inputImage.files.length > 0) {
+        const file = inputImage.files[0];
+        if(file.size > 2 * 1024 * 1024) {
+          alert('Ukuran gambar maksimal 2MB.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = currentEditingId ? 'Simpan Perubahan' : 'Tambah Produk';
+          return;
+        }
+        imageData = await fileToBase64(file);
+      } else if(!imageData) {
+        alert('Silakan upload gambar produk.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = currentEditingId ? 'Simpan Perubahan' : 'Tambah Produk';
+        return;
+      }
+
+      const payload = {
+        name: inputName.value.trim(),
+        description: inputDescription.value.trim(),
+        alt: inputAlt.value.trim(),
+        image: imageData
+      };
+
+      let resp;
+      if(currentEditingId) {
+        resp = await fetch(`${apiBase}/products/${currentEditingId}`, {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+      } else {
+        resp = await fetch(`${apiBase}/products`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+      }
+
+      if(resp.ok) {
+        alert(currentEditingId ? 'Produk berhasil diperbarui.' : 'Produk berhasil ditambah.');
+        loadProducts();
+        resetForm();
+      } else {
+        const err = await resp.json();
+        alert('Gagal menyimpan produk: ' + (err.error || 'server error'));
+      }
+    } catch(e) {
+      alert('Terjadi kesalahan saat menyimpan produk.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = currentEditingId ? 'Simpan Perubahan' : 'Tambah Produk';
+    }
+  });
+
+  // Init
+  loadStats();
+  loadProducts();
+/script>
+/body>
+/html>
